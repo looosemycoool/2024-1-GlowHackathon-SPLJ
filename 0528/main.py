@@ -54,9 +54,6 @@ def get_db():
     finally:
         db.close()
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello, World!"}
 
 @app.post("/politicians/", response_model=PoliticianModel)
 def create_politician(politician: PoliticianCreate, db: Session = Depends(get_db)):
