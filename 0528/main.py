@@ -8,13 +8,6 @@ app = FastAPI()
 
 from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI()
-
-from fastapi.middleware.cors import CORSMiddleware
-
-# 기존 FastAPI 앱 생성 코드
-app = FastAPI()
-
 # CORS 미들웨어 추가
 origins = [
     "http://localhost:3000",  # Next.js 기본 포트
@@ -28,8 +21,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 # Pydantic 모델
 class PromiseCreate(BaseModel):
@@ -63,7 +54,9 @@ def get_db():
     finally:
         db.close()
 
-
+@app.get("/")
+def read_root():
+    return {"message": "Hello, World!"}
 
 @app.post("/politicians/", response_model=PoliticianModel)
 def create_politician(politician: PoliticianCreate, db: Session = Depends(get_db)):
@@ -89,6 +82,23 @@ def create_promise_for_politician(
     db.commit()
     db.refresh(db_promise)
     return db_promise
+
+@app.get("/politicians/search/", response_model=List[PoliticianModel])
+def search_politicians(name: Optional[str] = None, region: Optional[str] = None, db: Session = Depends(get_db)):
+    query = db.query(Politician)
+    
+    if name:
+        query = query.filter(Politician.name.ilike(f"%{name}%"))
+    
+    if region:
+        query = query.filter(Politician.region.ilike(f"%{region}%"))
+    
+    politicians = query.all()
+    
+    for politician in politicians:
+        politician.calculate_fulfillment_rate = politician.total_fulfillment_rate()
+    
+    return politicians
 
 # 데이터베이스 초기 데이터 추가
 from sqlalchemy.orm import sessionmaker
