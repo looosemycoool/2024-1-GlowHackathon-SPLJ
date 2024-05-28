@@ -32,7 +32,7 @@ class PromiseModel(PromiseCreate):
     politician_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class PoliticianCreate(BaseModel):
     name: str
@@ -44,7 +44,7 @@ class PoliticianModel(PoliticianCreate):
     calculate_fulfillment_rate: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # DB 세션 의존성
 def get_db():
