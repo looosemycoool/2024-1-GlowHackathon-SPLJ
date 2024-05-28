@@ -6,6 +6,31 @@ from models import Base, Politician, Promise, SessionLocal, engine
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+
+from fastapi.middleware.cors import CORSMiddleware
+
+# 기존 FastAPI 앱 생성 코드
+app = FastAPI()
+
+# CORS 미들웨어 추가
+origins = [
+    "http://localhost:3000",  # Next.js 기본 포트
+    "https://politician_promise.com",  # 배포시 사용할 도메인
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
 # Pydantic 모델
 class PromiseCreate(BaseModel):
     description: str
