@@ -4,21 +4,26 @@ from fastapi import FastAPI, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, sessionmaker
 from typing import List, Optional, Tuple
 from models import Base, engine, Politician, Promise, Post, SessionLocal
 
+# 데이터베이스 초기화
 Base.metadata.create_all(bind=engine)
 
+# FastAPI 인스턴스 생성
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
 
+# 템플릿 디렉토리 생성
 if not os.path.exists("templates"):
     os.makedirs("templates")
 
+# 로깅 설정
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Pydantic 모델 정의
 class PromiseCreate(BaseModel):
     description: str
     status: str
@@ -53,6 +58,7 @@ class PostModel(PostCreate):
     class Config:
         orm_mode = True
 
+# 데이터베이스 세션 생성
 def get_db():
     db = SessionLocal()
     try:
@@ -60,6 +66,7 @@ def get_db():
     finally:
         db.close()
 
+# 파라미터 검증 함수
 def validate_params(name: Optional[str] = None, region: Optional[str] = None) -> Tuple[Optional[str], Optional[str]]:
     if not name and not region:
         raise HTTPException(status_code=400, detail="이름이나 지역 중 하나는 반드시 제공되어야 합니다.")
@@ -130,6 +137,13 @@ async def get_politician_promises(politician_id: int, request: Request, db: Sess
         "promises": politician.promises
     })
 
+@app.get("/politicians/{politician_id}/fulfillment_rate", response_model=float)
+def calculate_fulfillment_rate(politician_id: int, db: Session = Depends(get_db)):
+    politician = db.query(Politician).filter(Politician.id == politician_id).first()
+    if not politician:
+        raise HTTPException(status_code=404, detail="정치인을 찾을 수 없습니다")
+    return politician.total_fulfillment_rate()
+
 @app.post("/posts/", response_model=PostModel)
 def create_post(post: PostCreate, db: Session = Depends(get_db)):
     db_post = Post(**post.dict())
@@ -178,27 +192,29 @@ async def read_posts_html(request: Request, db: Session = Depends(get_db)):
     posts = db.query(Post).all()
     return templates.TemplateResponse("posts.html", {"request": request, "posts": posts})
 
-# 데이터베이스 초기 데이터 추가
-from sqlalchemy.orm import sessionmaker
-from models import engine, Politician, Promise
-Session = sessionmaker(bind=engine)
-session = Session()
+# 데이터베이스 초기 데이터 추가 (초기 설정 시 한 번만 실행)
+def initialize_db():
+    Session = sessionmaker(bind=engine)
+    session = Session()
 
-politician1 = Politician(name="홍준표", region="대구시장")
-session.add(politician1)
+    politician1 = Politician(name="홍준표", region="대구시장")
+    session.add(politician1)
 
-politician2 = Politician(name="우재준", region="대구북구갑")
-session.add(politician2)
+    politician2 = Politician(name="우재준", region="대구북구갑")
+    session.add(politician2)
 
-session.commit()
+    session.commit()
 
-promise1 = Promise(description="교통 개선 프로젝트", status="이행 완료", politician_id=politician1.id)
-session.add(promise1)
+    promise1 = Promise(description="교통 개선 프로젝트", status="이행 완료", politician_id=politician1.id)
+    session.add(promise1)
 
-promise2 = Promise(description="환경 보호 캠페인", status="진행 중", politician_id=politician1.id)
-session.add(promise2)
+    promise2 = Promise(description="환경 보호 캠페인", status="진행 중", politician_id=politician1.id)
+    session.add(promise2)
 
-promise3 = Promise(description="교육 지원 확대", status="이행 완료", politician_id=politician2.id)
-session.add(promise3)
+    promise3 = Promise(description="교육 지원 확대", status="이행 완료", politician_id=politician2.id)
+    session.add(promise3)
 
-session.commit()
+    session.commit()
+
+# 초기 데이터베이스 설정 함수 호출
+initialize_db()
