@@ -1,5 +1,5 @@
 # 2024-1-GlowHackathon-SPLJ
- 경북대학교 SW교육원, 해달, 멋쟁이 사자처럼이 주최한 GLOW 해커톤에서 사용한 GitHub 프로젝트의 이름입니다. Fastapi와 HTML을 사용하여 정치인 공약 이행률을 한 눈에 보여주는 웹사이트를 구현하였습니다.
+ 경북대학교 SW교육원, 해달, 멋쟁이 사자처럼이 주최한 GLOW 해커톤에서 사용한 GitHub 프로젝트의 이름입니다. FastAPI와 HTML을 사용하여 정치인 공약 이행률을 한 눈에 보여주는 웹사이트를 구현하였습니다.
 
 ## 목차
  + [📑프로젝트 소개](https://github.com/looosemycoool/2024-1-GlowHackathon-SPLJ/edit/main/README.md#%ED%94%84%EB%A1%9C%EC%A0%9D%ED%8A%B8-%EC%86%8C%EA%B0%9C)
@@ -45,4 +45,5 @@
 
 ## 🔗참고 자료
  + [대구광역시 열린시장실](https://mayor.daegu.go.kr/index.do;jsessionid=7EE7A7173FAF3DE0D95BCF66DF364EE5.tomcat6?menu_id=00938975&servletPath=%2Findex.do)
- + 
+ + [FastAPI 공식 사이트](https://fastapi.tiangolo.com/ko/tutorial/first-steps/)
+ + [혼자 공부하는 파이썬](https://hongong.hanbit.co.kr/%ED%8C%8C%EC%9D%B4%EC%8D%AC/)
