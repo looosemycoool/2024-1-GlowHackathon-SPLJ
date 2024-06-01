@@ -19,7 +19,7 @@
  + 프론트엔드(1명)와 백엔드(3명)로 나눠서 진행
  + 각자 Python을 공부하고 정기적으로 과정을 공유
  + 공부한 Python을 기반으로 FastAPI를 공부
- + Figma로 대략적인 사이트 UI를 구상 <>
+ + Figma로 대략적인 사이트 UI를 구상 [이미지](https://github.com/looosemycoool/2024-1-GlowHackathon-SPLJ/blob/main/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202024-06-02%20022523.png)
  + 백엔드는 서버를, 프론트엔드는 UI를 구현
  + 백과 프론트를 연결
 
